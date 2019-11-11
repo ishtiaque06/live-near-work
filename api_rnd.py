@@ -2,27 +2,31 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import optparse
+import googlemaps
+
 def main():
-    url = "https://www.zillow.com/webservice/GetRegionChildren.htm?zws-id=X1-ZWz1hgt8bigpvv_2ca3z&state=ma&city=boston&childtype=neighborhood"
-
-    response = requests.request("GET", url)
-
-    soup = BeautifulSoup(response.text, 'xml')
-
-    hello = {item.string for item in soup.find_all('name')}
-    # [print(item.string) for item in soup.find_all('longitude')]
-    # [print(item.string) for item in soup.find_all('latitude')]
+    # with open('zillow.key', 'r') as file:
+    #     key = file.readline().rstrip('\n')
+    # url = "https://www.zillow.com/webservice/GetRegionChildren.htm"
+    # state = "ma"
+    # city = "boston"
+    # childtype = "neighborhood"
+    # url = url + '?zws-id=' + key + '&state=' + state \
+    #         + '&city=' + city + "&childtype=" + childtype
+    #
+    # response = requests.request("GET", url)
+    #
+    # soup = BeautifulSoup(response.text, 'xml')
 
     here = {}
     with open('1_bedroom_rent.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=',')
-        for row in spamreader:
+        n_reader = csv.reader(csvfile, delimiter=',')
+        for row in n_reader:
             if row[1] == 'Boston':
-                here[row[0]] = row[-1]
+                here[f"{row[0]}, {row[1]}, {row[2]}"] = row[-1]
 
-    print(len(hello))
+    # print(len(hello))
     print(here)
-    print(len(here))
     # for item in hello:
         # print(item in here)
 
