@@ -3,32 +3,40 @@ from bs4 import BeautifulSoup
 import csv
 import optparse
 import googlemaps
+import argparse
 
-def main():
-    # with open('zillow.key', 'r') as file:
-    #     key = file.readline().rstrip('\n')
-    # url = "https://www.zillow.com/webservice/GetRegionChildren.htm"
-    # state = "ma"
-    # city = "boston"
-    # childtype = "neighborhood"
-    # url = url + '?zws-id=' + key + '&state=' + state \
-    #         + '&city=' + city + "&childtype=" + childtype
-    #
-    # response = requests.request("GET", url)
-    #
-    # soup = BeautifulSoup(response.text, 'xml')
+import sys
 
-    here = {}
+def get_neighborhood_prices(city, state):
+    prices = {}
     with open('1_bedroom_rent.csv', newline='') as csvfile:
         n_reader = csv.reader(csvfile, delimiter=',')
         for row in n_reader:
-            if row[1] == 'Boston':
-                here[f"{row[0]}, {row[1]}, {row[2]}"] = row[-1]
+            if row[1] == city and row[2] == state:
+                prices[f"{row[0]}, {row[1]}, {row[2]}"] = row[-1]
+    return prices
 
-    # print(len(hello))
-    print(here)
-    # for item in hello:
-        # print(item in here)
+def main():
+    parser = argparse.ArgumentParser(
+        description='Find cheap neighborhoods around a city.'
+    )
+    parser.add_argument('--city', required=True,
+        help='Select the city you want to work in')
+    parser.add_argument('--state', required=True,
+        help='Select the state you want to work in (two characters)')
+
+
+    args = parser.parse_args()
+    city = args.city
+    state = args.state
+    if len(state) != 2:
+        print("Please enter a valid state name (two characters exactly).")
+        sys.exit(1)
+    print(city, state)
+    prices = get_neighborhood_prices(city, state)
+
+
+    print(prices)
 
 
 if __name__ == '__main__':
