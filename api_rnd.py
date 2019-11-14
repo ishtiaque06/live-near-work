@@ -14,7 +14,7 @@ def get_neighborhood_prices(city, state, workplace, client):
         Given a city name and the state it's in, return a dict of
         neighborhood: rent_price values.
     '''
-    prices = {}
+    neighborhoods = []
     with open('1_bedroom_rent.csv', newline='') as csvfile:
         n_reader = csv.reader(csvfile, delimiter=',')
         for row in n_reader:
@@ -25,10 +25,8 @@ def get_neighborhood_prices(city, state, workplace, client):
                     workplace,
                     client
                     )
-                duration = nh.find_transit_duration()
-                print(f"{nh.name} to {nh.workplace} takes {nh.duration}.")
-                prices[f"{row[0]}, {row[1]}, {row[2]}"] = row[-1]
-    return prices
+                neighborhoods.append(nh)
+    return neighborhoods
 
 def main():
     '''
@@ -56,10 +54,14 @@ def main():
     with open('maps.key', 'r') as f:
         key = f.readline().rstrip('\n')
         client = googlemaps.Client(key=key)
-    prices = get_neighborhood_prices(city, state, place, client)
+    neighborhoods = get_neighborhood_prices(city, state, place, client)
+    total_price = 0
+    for nh in neighborhoods:
+        print(f"{nh.name} to {nh.workplace} takes {nh.duration}.")
+        print(f"Average 1-bedroom rent according to Zillow: {nh.price}")
+        total_price += float(nh.price)
+    print(f"Average rent price in {city}'s neighborhoods: {total_price/len(neighborhoods)}")
 
-
-    # print(prices)
 
 
 if __name__ == '__main__':
